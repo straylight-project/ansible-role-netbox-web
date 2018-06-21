@@ -1,2 +1,26 @@
 ---
-# tasks file for netbox-web
+- name: ensure packages are installed
+  apt:
+    update_cache: yes
+    name: "{{item}}"
+  with_items:
+    - nginx
+
+- name: ensure default config for nginx is disabled
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: "restart webserver"
+
+- name: ensure netbox config for nginx is present
+  template:
+    src: nginx_netbox.j2
+    dest: /etc/nginx/sites-available/netbox
+  notify: "restart webserver"
+
+- name: ensure netbox config for nginx is enabled
+  file:
+    src: /etc/nginx/sites-available/netbox
+    dest: /etc/nginx/sites-enabled/netbox
+    state: link
+  notify: "restart webserver"
