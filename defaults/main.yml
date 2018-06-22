@@ -1,3 +1,4 @@
 ---
 netbox_install_directory: /opt
 netbox_webserver_name: localhost
+netbox_webserver_use_ssl: yes

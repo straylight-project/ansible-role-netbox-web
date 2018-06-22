@@ -12,11 +12,39 @@
     state: absent
   notify: "restart webserver"
 
-- name: ensure netbox config for nginx is present
+- name: "ensure key is present for {{ netbox_webserver_name }}"
+  copy:
+    dest: "/etc/ssl/private/{{ netbox_webserver_name }}.key"
+    content: "{{ netbox_webserver_ssl_key }}"
+    owner: root
+    group: ssl-cert
+    mode: 0640
+  notify: "restart webserver"
+  when: netbox_webserver_use_ssl
+
+- name: "ensure certificate is present for {{ netbox_webserver_name }}"
+  copy:
+    dest: "/etc/ssl/certs/{{ netbox_webserver_name }}.crt"
+    content: "{{ netbox_webserver_ssl_crt }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: "restart webserver"
+  when: netbox_webserver_use_ssl
+
+- name: ensure netbox HTTPS config for nginx is present
+  template:
+    src: nginx_netbox_ssl.j2
+    dest: /etc/nginx/sites-available/netbox
+  notify: "restart webserver"
+  when: netbox_webserver_use_ssl
+
+- name: ensure netbox non-HTTPS config for nginx is present
   template:
     src: nginx_netbox.j2
     dest: /etc/nginx/sites-available/netbox
   notify: "restart webserver"
+  when: not netbox_webserver_use_ssl
 
 - name: ensure netbox config for nginx is enabled
   file:
