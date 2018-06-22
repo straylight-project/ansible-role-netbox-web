@@ -1,2 +1,3 @@
 ---
-# defaults file for netbox-web
+netbox_install_directory: /opt
+netbox_webserver_name: localhost

@@ -1,12 +1,12 @@
 server {
     listen 80;
 
-    server_name localhost
+    server_name {{ netbox_webserver_name }}
 
     client_max_body_size 25m;
 
     location /static/ {
-        alias /opt/netbox/netbox/static/;
+        alias {{ netbox_install_directory }}/netbox/netbox/static/;
     }
 
     location / {
